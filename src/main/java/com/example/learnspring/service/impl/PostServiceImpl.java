@@ -6,6 +6,7 @@ import com.example.learnspring.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,11 @@ public class PostServiceImpl implements IPostService {
     @Autowired
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
+    }
+
+    @Override
+    public Optional<List<Post>> getAllPosts() {
+        return Optional.of(postRepository.findAll());
     }
 
     @Override

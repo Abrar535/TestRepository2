@@ -1,14 +1,17 @@
 package com.example.learnspring.model;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class Post {
+
+    @Transient
+    private JsonNode json;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -27,6 +30,15 @@ public class Post {
                 " body: %s," +
                 " published_date: %s" +
                 ")", this.id, this.title, this.body, this.published_date.toString());
+    }
+
+    @Transient
+    public JsonNode getJson() {
+        return json;
+    }
+
+    public void setJson(JsonNode json) {
+        this.json = json;
     }
 
     public long getId() {
