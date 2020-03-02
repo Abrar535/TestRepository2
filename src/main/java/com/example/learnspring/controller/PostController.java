@@ -8,17 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 public class PostController {
+
 
     private final IPostService iPostService;
 
@@ -30,11 +30,7 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts",
-            method = RequestMethod.GET,
-            produces = {
-                    MediaType.APPLICATION_JSON_VALUE,
-                    MediaType.APPLICATION_XML_VALUE,
-            }
+            method = RequestMethod.GET
     )
     public ResponseEntity<Iterable<Post>> getAllPosts() {
         return new ResponseEntity<>(iPostService.getAllPosts(), HttpStatus.OK);
@@ -42,15 +38,11 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts/{id}",
-            method = RequestMethod.GET,
-            produces = {
-                    MediaType.APPLICATION_JSON_VALUE,
-                    MediaType.APPLICATION_XML_VALUE,
-            }
+            method = RequestMethod.GET
     )
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
         Optional<Post> post = iPostService.findById(id);
-        return post.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+        return post.map(p -> new ResponseEntity<>(p, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
 
     }
@@ -58,7 +50,17 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts",
-            method = RequestMethod.POST,
+            method = RequestMethod.POST
+    )
+    public ResponseEntity<Post> createPost(@Valid Post newPost) {
+        Post post = iPostService.save(newPost);
+        return new ResponseEntity<>(post, HttpStatus.CREATED);
+    }
+
+
+    @RequestMapping(
+            value = "/posts/{id}",
+            method = RequestMethod.PUT,
             consumes = {
                     MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE,
@@ -68,9 +70,15 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Long> createPost(@Valid Post post, BindingResult bindingResult) {
-        Long postId = iPostService.save(post);
-        return new ResponseEntity<>(postId, HttpStatus.CREATED);
+    public ResponseEntity<Post> editPost(@PathVariable Long id, @RequestBody Post newPost) {
+        Optional<Post> post = iPostService.findById(id);
+
+        return post.map(p -> {
+            p.setTitle(newPost.getTitle());
+            p.setBody(newPost.getBody());
+            Post editedPost = iPostService.save(p);
+            return new ResponseEntity<>(editedPost, HttpStatus.OK);
+        }).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
 
 }

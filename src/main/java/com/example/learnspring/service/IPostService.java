@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface IPostService {
     Optional<Post> findById(Long id);
     List<Post> getAllPosts();
-    Long save(Post post);
+    Post save(Post post);
     void delete(Post post);
 }

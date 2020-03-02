@@ -30,8 +30,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Long save(Post post) {
-        return postRepository.saveAndFlush(post).getId();
+    public Post save(Post post) {
+        return postRepository.saveAndFlush(post);
     }
 
     @Override
