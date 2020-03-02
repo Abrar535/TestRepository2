@@ -71,7 +71,7 @@ public class PostController {
 
 
     @RequestMapping(
-            value = "/posts/{id}",
+            value = "/posts",
             method = RequestMethod.PUT,
             consumes = {
                     MediaType.APPLICATION_JSON_VALUE,
@@ -82,8 +82,8 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Post> editPost(@PathVariable Long id, @RequestBody Post newPost) {
-        Optional<Post> post = iPostService.findById(id);
+    public ResponseEntity<Post> editPost(@Valid Post newPost) {
+        Optional<Post> post = iPostService.findById(newPost.getId());
 
         return post.map(p -> {
             p.setTitle(newPost.getTitle());

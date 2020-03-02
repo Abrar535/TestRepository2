@@ -14,6 +14,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String title;
+    @Lob
     private String body;
     private Date published_date = new Date();
 
