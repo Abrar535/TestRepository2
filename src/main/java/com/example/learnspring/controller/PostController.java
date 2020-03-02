@@ -30,7 +30,11 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts",
-            method = RequestMethod.GET
+            method = RequestMethod.GET,
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+            }
     )
     public ResponseEntity<Iterable<Post>> getAllPosts() {
         return new ResponseEntity<>(iPostService.getAllPosts(), HttpStatus.OK);
@@ -38,7 +42,11 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts/{id}",
-            method = RequestMethod.GET
+            method = RequestMethod.GET,
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+            }
     )
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
         Optional<Post> post = iPostService.findById(id);
@@ -50,7 +58,15 @@ public class PostController {
 
     @RequestMapping(
             value = "/posts",
-            method = RequestMethod.POST
+            method = RequestMethod.POST,
+            consumes = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+            },
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+            }
     )
     public ResponseEntity<Post> createPost(@Valid Post newPost) {
         Post post = iPostService.save(newPost);
