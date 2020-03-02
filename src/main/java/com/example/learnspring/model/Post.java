@@ -1,10 +1,11 @@
 package com.example.learnspring.model;
 
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -13,10 +14,18 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @ManyToOne
+    @JsonIgnore
+    @NotNull
+    private User user;
+
     private String title;
     @Lob
     private String body;
     private Date published_date = new Date();
+
+
 
     protected Post() {
     }
@@ -39,6 +48,14 @@ public class Post {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {
