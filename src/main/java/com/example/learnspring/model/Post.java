@@ -1,6 +1,7 @@
 package com.example.learnspring.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.persistence.*;
@@ -9,18 +10,16 @@ import java.util.Date;
 @Entity
 public class Post {
 
-    @Transient
-    private JsonNode json;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String title;
     private String body;
-    private Date published_date;
+    private Date published_date = new Date();
 
     protected Post() {
     }
+
 
     @Override
     public String toString() {
@@ -32,14 +31,6 @@ public class Post {
                 ")", this.id, this.title, this.body, this.published_date.toString());
     }
 
-    @Transient
-    public JsonNode getJson() {
-        return json;
-    }
-
-    public void setJson(JsonNode json) {
-        this.json = json;
-    }
 
     public long getId() {
         return id;

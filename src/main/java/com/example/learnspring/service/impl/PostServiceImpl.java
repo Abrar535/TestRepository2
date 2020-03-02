@@ -20,8 +20,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Optional<List<Post>> getAllPosts() {
-        return Optional.of(postRepository.findAll());
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
     }
 
     @Override
@@ -30,8 +30,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Post save(Post post) {
-        return postRepository.saveAndFlush(post);
+    public Long save(Post post) {
+        return postRepository.saveAndFlush(post).getId();
     }
 
     @Override
