@@ -7,14 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 public class PostController {
@@ -51,7 +47,7 @@ public class PostController {
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
         Optional<Post> post = iPostService.findById(id);
         return post.map(p -> new ResponseEntity<>(p, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
@@ -94,7 +90,20 @@ public class PostController {
             p.setBody(newPost.getBody());
             Post editedPost = iPostService.save(p);
             return new ResponseEntity<>(editedPost, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @RequestMapping(
+            value = "/posts/{id}",
+            method = RequestMethod.DELETE
+    )
+    public ResponseEntity<Object> deletePost(@PathVariable Long id) {
+        Optional<Post> post = iPostService.findById(id);
+
+        return post.map(p -> {
+            iPostService.delete(p);
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
