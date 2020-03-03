@@ -4,15 +4,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Service
 public class JwtUtil {
 
     private String SECRET_KEY = "cefalo_backend_api_fuad";
+    private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
     public String extractUserId(String token){
         return extractClaim(token, Claims::getSubject);
@@ -49,7 +52,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2)) // 2 hours
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SIGNATURE_ALGORITHM, SECRET_KEY)
                 .compact();
     }
 
