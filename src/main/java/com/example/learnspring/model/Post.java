@@ -15,16 +15,16 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
-    @JsonIgnore
-    @NotNull
-    private User user;
 
     private String title;
     @Lob
     private String body;
     private Date published_date = new Date();
 
+    @ManyToOne
+    @JsonIgnore
+    @NotNull
+    private User user;
 
 
     protected Post() {

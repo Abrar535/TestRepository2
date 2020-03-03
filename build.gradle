@@ -17,10 +17,19 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    //spring JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    //spring WEB
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-test'
+    //fast XML Jackson
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.2'
+
+
     runtimeOnly 'mysql:mysql-connector-java'
 }
 

@@ -16,6 +16,9 @@ public class User {
     @Length(min = 5, message = "*Please make userId containing at least 5 alphanumeric characters")
     private String userId;
     private String name;
+    @Column(nullable = false)
+    @Length(min = 8, max = 32)
+    private String password;
 
     @OneToMany(mappedBy = "user")
     private Collection<Post> posts;
@@ -45,6 +48,14 @@ public class User {
         this.name = name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Collection<Post> getPosts() {
         return posts;
     }
@@ -52,4 +63,5 @@ public class User {
     public void setPosts(Collection<Post> posts) {
         this.posts = posts;
     }
+
 }
