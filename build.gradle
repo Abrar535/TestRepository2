@@ -17,6 +17,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+
     //spring JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -26,9 +27,15 @@ dependencies {
     //spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
+
     //fast XML Jackson
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.2'
 
+    //jjwt
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
+
+    //jaxb in-case of java 9+(built in dependency removed in java 9+)
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
 
     runtimeOnly 'mysql:mysql-connector-java'
 }
