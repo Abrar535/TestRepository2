@@ -23,14 +23,12 @@ public class PostController {
 
 
     private final IPostService iPostService;
-    private final IUserService iUserService;
 
 
     @Autowired
     public PostController(IPostService iPostService, IUserService iUserService)
     {
         this.iPostService = iPostService;
-        this.iUserService = iUserService;
     }
 
     @RequestMapping(
@@ -74,12 +72,11 @@ public class PostController {
             }
     )
     public ResponseEntity<?> createPost(@RequestBody Post requestPost, Principal principal) {
-        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
-        requestPost.setUser(currentUser.get());
-        requestPost.setCreatedAt(new Date());
-        requestPost.setUpdatedAt(new Date());
-        Post newPost = iPostService.save(requestPost);
-        return new ResponseEntity<>(newPost, HttpStatus.CREATED);
+        Optional<Post> post = iPostService.createNewPost(requestPost, principal);
+
+        return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.CREATED)
+                : new ResponseEntity<>("Unable to save post", HttpStatus.UNPROCESSABLE_ENTITY);
+
     }
 
 
@@ -95,33 +92,22 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Post> editPost(@RequestBody Post requestPost, Principal principal) {
-        Optional<Post> post = iPostService.findById(requestPost.getId());
-        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
-
-
-
-        return post.map(p -> {
-
-            p.setTitle(requestPost.getTitle());
-            p.setBody(requestPost.getBody());
-            p.setUpdatedAt(new Date());
-            Post editedPost = iPostService.save(p);
-            return new ResponseEntity<>(editedPost, HttpStatus.OK);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> editPost(@RequestBody Post requestPost, Principal principal) {
+        Optional<Post> post = iPostService.updatePost(requestPost, principal);
+        return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>("Unauthorized access to post", HttpStatus.UNAUTHORIZED);
     }
+
+
+
 
     @RequestMapping(
             value = "/posts/{id}",
             method = RequestMethod.DELETE
     )
-    public ResponseEntity<Object> deletePost(@PathVariable Long id) {
-        Optional<Post> post = iPostService.findById(id);
-
-        return post.map(p -> {
-            iPostService.delete(p);
-            return ResponseEntity.noContent().build();
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> deletePost(@PathVariable Long id, Principal principal) {
+        return (iPostService.deletePost(id, principal))? new ResponseEntity<>(true, HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>("Unauthorized access to post", HttpStatus.UNAUTHORIZED);
     }
 
 }

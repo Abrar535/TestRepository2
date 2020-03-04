@@ -44,13 +44,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     private boolean userIdExists(String userId) {
-        User user = userRepository.findByUserId(userId);
-        return user != null;
+        Optional<User> user = Optional.ofNullable(userRepository.findByUserId(userId));
+        return user.isPresent();
     }
 
     @Override
     public Optional<User> findByUserId(String userId) {
-        return Optional.ofNullable((userIdExists(userId)) ? userRepository.findByUserId(userId) : null);
+        return Optional.ofNullable(userRepository.findByUserId(userId));
     }
 
     @Override

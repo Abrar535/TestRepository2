@@ -1,5 +1,6 @@
 package com.example.learnspring.controller;
 
+import com.example.learnspring.exception.UserIdExistsException;
 import com.example.learnspring.model.auth.AuthenticationRequest;
 import com.example.learnspring.model.auth.AuthenticationResponse;
 import com.example.learnspring.service.MyUserDetailsService;
