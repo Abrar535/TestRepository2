@@ -7,8 +7,6 @@ import com.example.learnspring.model.User;
 import java.util.Optional;
 
 public interface IUserService {
-    Optional<User> findById(Long id);
     Optional<User> findByUserId(String userId);
-    User registerNewUserAccountAfterCheckingUserId(User user) throws UserIdExistsException;
-    void delete(User user);
+    Optional<User> registerNewUserAccountAfterCheckingUserId(User user) throws UserIdExistsException;
 }

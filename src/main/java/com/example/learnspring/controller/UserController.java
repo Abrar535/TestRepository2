@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -38,32 +39,18 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<?> registerUser(@RequestBody User requestUser, BindingResult bindingResult){
-
-        User newUser = null;
-        if(!bindingResult.hasErrors()){
-            newUser = createUserAccount(requestUser, bindingResult);
+    public ResponseEntity<?> registerUser(@RequestBody User requestUser){
+        Optional<User> newUser;
+        try {
+            newUser = iUserService.registerNewUserAccountAfterCheckingUserId(requestUser);
+        } catch (UserIdExistsException e) {
+            return  new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if(newUser == null){
-            bindingResult.rejectValue("userId", "message.regError", "userID: " + requestUser.getUserId() + " already exists");
+        if(newUser.isPresent()){
             return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
-
-    private User createUserAccount(User requestUser, BindingResult result) {
-        User newUser = null;
-        try {
-            newUser = iUserService.registerNewUserAccountAfterCheckingUserId(requestUser);
-        } catch (UserIdExistsException e) {
-            return null;
-        }
-        return newUser;
-    }
-
-
-
-
 
 }
 

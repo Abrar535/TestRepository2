@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
@@ -24,14 +25,13 @@ public class UserServiceImpl implements IUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public Optional<User> findById(Long id) {
+    private Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
     @Transactional
     @Override
-    public User registerNewUserAccountAfterCheckingUserId(User user)
+    public Optional<User> registerNewUserAccountAfterCheckingUserId(User user)
             throws UserIdExistsException {
 
         if (userIdExists(user.getUserId())) {
@@ -40,7 +40,7 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
-        return userRepository.saveAndFlush(user);
+        return Optional.of(userRepository.saveAndFlush(user));
     }
 
     private boolean userIdExists(String userId) {
@@ -53,8 +53,9 @@ public class UserServiceImpl implements IUserService {
         return Optional.ofNullable(userRepository.findByUserId(userId));
     }
 
-    @Override
-    public void delete(User user) {
+
+
+    private void delete(User user) {
         userRepository.delete(user);
     }
 }

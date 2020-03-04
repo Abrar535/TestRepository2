@@ -5,6 +5,7 @@ import com.example.learnspring.model.User;
 import com.example.learnspring.repository.PostRepository;
 import com.example.learnspring.repository.UserRepository;
 import com.example.learnspring.service.IPostService;
+import com.example.learnspring.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,12 @@ import java.util.Optional;
 public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final IUserService iUserService;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository) {
+    public PostServiceImpl(PostRepository postRepository, IUserService iUserService) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.iUserService = iUserService;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Optional<Post> createNewPost(Post post, Principal principal) {
-        Optional<User> currentUser = Optional.ofNullable(userRepository.findByUserId(principal.getName()));
+        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
 
         post.setUser(currentUser.get());
         post.setCreatedAt(new Date());
@@ -51,7 +52,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Optional<Post> updatePost(Post requestPost, Principal principal) {
         Optional<Post> post = postRepository.findById(requestPost.getId());
-        Optional<User> currentUser = Optional.of(userRepository.findByUserId(principal.getName()));
+        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
 
         if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
             return Optional.empty();
@@ -71,7 +72,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Boolean deletePost(Long postId, Principal principal) {
         Optional<Post> post = postRepository.findById(postId);
-        Optional<User> currentUser = Optional.of(userRepository.findByUserId(principal.getName()));
+        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
 
         if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
             return false;
