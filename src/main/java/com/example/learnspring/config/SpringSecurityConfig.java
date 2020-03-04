@@ -5,6 +5,7 @@ import com.example.learnspring.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -67,7 +68,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/user/authenticate")
+                .antMatchers("/user/authenticate", "/user/registration")
+                .permitAll()
+                .antMatchers(HttpMethod.GET)
                 .permitAll()
                 .anyRequest()
                 .authenticated()

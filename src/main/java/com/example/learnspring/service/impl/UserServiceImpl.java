@@ -1,6 +1,6 @@
 package com.example.learnspring.service.impl;
 
-import com.example.learnspring.model.exception.UserIdExistsException;
+import com.example.learnspring.exception.UserIdExistsException;
 import com.example.learnspring.model.User;
 import com.example.learnspring.repository.UserRepository;
 import com.example.learnspring.service.IUserService;
@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -31,18 +32,25 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public User registerNewUserAccountAfterCheckingUserId(User user)
-    throws UserIdExistsException {
+            throws UserIdExistsException {
 
-        if(userIdExists(user.getUserId())){
+        if (userIdExists(user.getUserId())) {
             throw new UserIdExistsException("userID: " + user.getUserId() + " already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
         return userRepository.saveAndFlush(user);
     }
 
     private boolean userIdExists(String userId) {
         User user = userRepository.findByUserId(userId);
         return user != null;
+    }
+
+    @Override
+    public Optional<User> findByUserId(String userId) {
+        return Optional.ofNullable((userIdExists(userId)) ? userRepository.findByUserId(userId) : null);
     }
 
     @Override

@@ -2,15 +2,20 @@ package com.example.learnspring.controller;
 
 
 import com.example.learnspring.model.Post;
+import com.example.learnspring.model.User;
 import com.example.learnspring.service.IPostService;
+import com.example.learnspring.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -18,11 +23,14 @@ public class PostController {
 
 
     private final IPostService iPostService;
+    private final IUserService iUserService;
 
 
     @Autowired
-    public PostController(IPostService iPostService) {
+    public PostController(IPostService iPostService, IUserService iUserService)
+    {
         this.iPostService = iPostService;
+        this.iUserService = iUserService;
     }
 
     @RequestMapping(
@@ -65,9 +73,13 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Post> createPost(@Valid Post newPost, BindingResult bindingResult) {
-        Post post = iPostService.save(newPost);
-        return new ResponseEntity<>(post, HttpStatus.CREATED);
+    public ResponseEntity<?> createPost(@RequestBody Post requestPost, Principal principal) {
+        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
+        requestPost.setUser(currentUser.get());
+        requestPost.setCreatedAt(new Date());
+        requestPost.setUpdatedAt(new Date());
+        Post newPost = iPostService.save(requestPost);
+        return new ResponseEntity<>(newPost, HttpStatus.CREATED);
     }
 
 
@@ -83,12 +95,17 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Post> editPost(@Valid Post newPost) {
-        Optional<Post> post = iPostService.findById(newPost.getId());
+    public ResponseEntity<Post> editPost(@RequestBody Post requestPost, Principal principal) {
+        Optional<Post> post = iPostService.findById(requestPost.getId());
+        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
+
+
 
         return post.map(p -> {
-            p.setTitle(newPost.getTitle());
-            p.setBody(newPost.getBody());
+
+            p.setTitle(requestPost.getTitle());
+            p.setBody(requestPost.getBody());
+            p.setUpdatedAt(new Date());
             Post editedPost = iPostService.save(p);
             return new ResponseEntity<>(editedPost, HttpStatus.OK);
         }).orElseGet(() -> ResponseEntity.notFound().build());

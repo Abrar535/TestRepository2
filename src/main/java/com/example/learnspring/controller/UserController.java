@@ -1,16 +1,13 @@
 package com.example.learnspring.controller;
 
 
-import com.example.learnspring.model.auth.AuthenticationRequest;
-import com.example.learnspring.model.exception.UserIdExistsException;
+import com.example.learnspring.exception.UserIdExistsException;
 import com.example.learnspring.model.User;
 import com.example.learnspring.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,15 +30,16 @@ public class UserController {
             value = "/user/registration",
             method = RequestMethod.POST,
             consumes = {
+                    MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE,
-                    MediaType.APPLICATION_JSON_VALUE
             },
             produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE,
-                    MediaType.APPLICATION_JSON_VALUE
             }
     )
-    public ResponseEntity<Void> registerUser(@Valid User requestUser, BindingResult bindingResult){
+    public ResponseEntity<?> registerUser(@RequestBody User requestUser, BindingResult bindingResult){
+
         User newUser = null;
         if(!bindingResult.hasErrors()){
             newUser = createUserAccount(requestUser, bindingResult);
@@ -50,7 +48,7 @@ public class UserController {
             bindingResult.rejectValue("userId", "message.regError", "userID: " + requestUser.getUserId() + " already exists");
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     private User createUserAccount(User requestUser, BindingResult result) {

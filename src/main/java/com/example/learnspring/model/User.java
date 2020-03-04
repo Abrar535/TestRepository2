@@ -1,26 +1,33 @@
 package com.example.learnspring.model;
 
 
+import com.example.learnspring.model.template.AuditModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Entity
-public class User {
+public class User extends AuditModel{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
+    @NotNull
     @Length(min = 5, message = "*Please make userId containing at least 5 alphanumeric characters")
     private String userId;
+    @NotNull
     private String name;
-    @Column(nullable = false)
-    @Length(min = 8, max = 32)
+    @Length(min = 8)
+    @NotNull
+    @Lob
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @OneToMany(targetEntity=Post.class,cascade = CascadeType.ALL , fetch = FetchType.LAZY, mappedBy = "user")
     private Collection<Post> posts;
 
 
@@ -62,6 +69,16 @@ public class User {
 
     public void setPosts(Collection<Post> posts) {
         this.posts = posts;
+    }
+
+    public void addPosts(Post post){
+        posts.add(post);
+        post.setUser(this);
+    }
+
+    public void removePosts(Post post){
+        posts.remove(post);
+        post.setUser(null);
     }
 
 }

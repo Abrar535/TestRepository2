@@ -2,33 +2,28 @@ package com.example.learnspring.model;
 
 
 
+import com.example.learnspring.model.template.AuditModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
-public class Post {
+public class Post extends AuditModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-
+    @NotNull
     private String title;
     @Lob
+    @NotNull
     private String body;
-    private Date published_date = new Date();
 
     @ManyToOne
     @JsonIgnore
-    @NotNull
     private User user;
 
-
-    protected Post() {
-    }
 
 
     @Override
@@ -37,10 +32,10 @@ public class Post {
                 " id: %d," +
                 " title: %s," +
                 " body: %s," +
-                " published_date: %s" +
-                ")", this.id, this.title, this.body, this.published_date.toString());
+                " published_date: %s," +
+                " updated_date: %s" +
+                ")", this.id, this.title, this.body, this.getCreatedAt(), this.getUpdatedAt());
     }
-
 
     public long getId() {
         return id;
@@ -74,11 +69,4 @@ public class Post {
         this.body = body;
     }
 
-    public Date getPublished_date() {
-        return published_date;
-    }
-
-    public void setPublished_date(Date published_date) {
-        this.published_date = published_date;
-    }
 }
