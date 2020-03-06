@@ -4,8 +4,13 @@ package com.example.learnspring.model;
 
 import com.example.learnspring.model.template.AuditModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -14,16 +19,18 @@ public class Post extends AuditModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotNull
+    @NotBlank
     private String title;
     @Lob
-    @NotNull
+    @NotBlank
     private String body;
 
     @ManyToOne
-    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @Transient
+    private String authorId;
 
 
     @Override
@@ -38,19 +45,22 @@ public class Post extends AuditModel {
     }
 
     public long getId() {
+        setAuthorId();
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
     }
-
+    @JsonIgnore
     public User getUser() {
         return user;
     }
 
+    @JsonIgnore
     public void setUser(User user) {
         this.user = user;
+        this.authorId = user.getUserId();
     }
 
     public String getTitle() {
@@ -69,4 +79,11 @@ public class Post extends AuditModel {
         this.body = body;
     }
 
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId() {
+        this.authorId = this.user.getUserId();
+    }
 }

@@ -46,6 +46,7 @@ public class PostServiceImpl implements IPostService {
         post.setUser(currentUser.get());
         post.setCreatedAt(new Date());
         post.setUpdatedAt(new Date());
+        currentUser.get().addPosts(post);
         return Optional.ofNullable(save(post));
     }
 

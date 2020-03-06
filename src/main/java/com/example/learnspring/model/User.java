@@ -3,9 +3,11 @@ package com.example.learnspring.model;
 
 import com.example.learnspring.model.template.AuditModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
@@ -16,14 +18,15 @@ public class User extends AuditModel{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true)
-    @NotNull
+    @NotBlank
     @Length(min = 5, message = "*Please make userId containing at least 5 alphanumeric characters")
     private String userId;
-    @NotNull
+    @NotBlank
     private String name;
     @Length(min = 8)
     @NotNull
     @Lob
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @JsonIgnore
@@ -55,10 +58,10 @@ public class User extends AuditModel{
         this.name = name;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }

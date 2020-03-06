@@ -39,14 +39,14 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<?> registerUser(@RequestBody User requestUser){
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User requestUser){
         Optional<User> newUser;
         try {
             newUser = iUserService.registerNewUserAccountAfterCheckingUserId(requestUser);
         } catch (UserIdExistsException e) {
             return  new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if(newUser.isPresent()){
+        if(!newUser.isPresent()){
             return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
