@@ -7,8 +7,11 @@ import com.example.learnspring.repository.UserRepository;
 import com.example.learnspring.service.IPostService;
 import com.example.learnspring.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -29,8 +32,11 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Page<Post> getAllPostsByPage(int pageNumber) {
+        Pageable pageable = (pageNumber != -1)?
+            PageRequest.of(pageNumber, 8, Sort.by("createdAt").descending())
+            : PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
+        return postRepository.findAll(pageable);
     }
 
     @Override
@@ -66,7 +72,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     public Post save(Post post) {
-        return postRepository.saveAndFlush(post);
+        return postRepository.save(post);
     }
 
 
