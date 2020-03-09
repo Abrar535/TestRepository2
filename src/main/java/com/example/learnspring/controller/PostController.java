@@ -39,15 +39,18 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<Iterable<Post>> getAllPosts(@RequestParam(name = "page", required = false) String pageCount) {
+    public ResponseEntity<Iterable<Post>> getAllPosts(@RequestParam(name = "page", required = false) String pageCount,
+                                                      @RequestParam(name = "size", required = false) String dataSize) {
 
-        int pageNumber;
+        int pageNumber, pageSize;
         try {
             pageNumber =  Integer.parseInt(pageCount);
+            pageSize =  Integer.parseInt(dataSize);
         } catch (NumberFormatException e) {
             pageNumber = -1;
+            pageSize = 8;
         }
-        return new ResponseEntity<>(iPostService.getAllPostsByPage(pageNumber), HttpStatus.OK);
+        return new ResponseEntity<>(iPostService.getAllPostsByPage(pageNumber, pageSize), HttpStatus.OK);
     }
 
     @RequestMapping(

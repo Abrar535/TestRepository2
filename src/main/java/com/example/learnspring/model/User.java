@@ -30,7 +30,7 @@ public class User extends AuditModel{
     private String password;
 
     @JsonIgnore
-    @OneToMany(targetEntity=Post.class,cascade = CascadeType.ALL , fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(mappedBy="user")
     private Collection<Post> posts;
 
 

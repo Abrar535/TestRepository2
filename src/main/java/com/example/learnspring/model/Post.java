@@ -26,7 +26,7 @@ public class Post extends AuditModel {
     private String body;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Transient
@@ -45,7 +45,6 @@ public class Post extends AuditModel {
     }
 
     public long getId() {
-        setAuthorId();
         return id;
     }
 
@@ -57,7 +56,6 @@ public class Post extends AuditModel {
         return user;
     }
 
-    @JsonIgnore
     public void setUser(User user) {
         this.user = user;
         this.authorId = user.getUserId();
@@ -80,7 +78,7 @@ public class Post extends AuditModel {
     }
 
     public String getAuthorId() {
-        return authorId;
+        return this.user.getUserId();
     }
 
     public void setAuthorId() {

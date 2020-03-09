@@ -32,9 +32,9 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Page<Post> getAllPostsByPage(int pageNumber) {
+    public Page<Post> getAllPostsByPage(int pageNumber, int pageSize) {
         Pageable pageable = (pageNumber != -1)?
-            PageRequest.of(pageNumber, 8, Sort.by("createdAt").descending())
+            PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending())
             : PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
         return postRepository.findAll(pageable);
     }
