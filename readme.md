@@ -25,7 +25,7 @@ Gradle
     ./gradlew bootRun
 ```
 
-### API Documentation
+## API Documentation
 The API can negotiation content feeds in both JSON and XML formats.
 
 #### Posts
@@ -93,15 +93,18 @@ response:
     "authorId": "current_loggedIn_userId"
 }
 ```
-Sample request body for /posts PUT method
+Sample request/response body for /posts PUT method
 
 ```
+request:
 // all fields required
 {
     "id": post_id,
     "title": "updated title",
     "body": "updated body"
 }
+
+response: no body with 201(created) status code
 ```
 
 #### User
@@ -116,7 +119,6 @@ Sample request/response for /user/registration POST method
 
 ```
 request:
-
 // all fields required
 {
 	"name": "user name",
@@ -139,6 +141,7 @@ response:
 Sample request/response body for /user/authenticate POST method
 
 ```
+request:
 // all fields required
 {
     "userId": "unique userId",
@@ -152,3 +155,12 @@ response:
     "jwt": "user_JWT"
 }
 ```
+
+
+### Error Messages
+| status code | message | probable cause
+| --- | --- | ---
+|`400(bad request)`|  json with error list, message, status| request body required field missing|
+|`401(unauthorized)` | url path, timestamp, unauthorized message as JSON  |  update or delete post which is not associated with the JWT user/ invalid Auth credential/ missing Authorization request header/ unauthorized or expired JWT 
+|`422(unprocessable entity)` | userID: ${userId} already exists  | requested user registration with existing userId 
+|`404(not found)` | no body sent | request to non existing resource

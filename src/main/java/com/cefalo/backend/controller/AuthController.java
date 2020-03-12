@@ -49,7 +49,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUserId(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e){
-            throw new Exception("Incorrect username or password");
+            throw e;
         }
 
         final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getUserId());
