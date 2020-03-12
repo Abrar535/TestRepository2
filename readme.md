@@ -31,10 +31,10 @@ The API can negotiation content feeds in both JSON and XML formats.
 #### Posts
 | url | Description
 | --- | --- 
-| **[GET]** `/posts` |  responds with all posts in the database |
-| **[GET]** `/posts/${post_id}` |  responds with post with the id specified |
-| **[GET]** `/posts?page=${page_number}` |  adds panigation support with page size = 8, page_number starts at 0
-| **[GET]** `/posts?page=${page_number}&size=${page_size}` | pagination with custom page size 
+| `[GET]` `/posts` |  responds with all posts in the database |
+| `[GET]` `/posts/${post_id}` |  responds with post with the id specified |
+| `[GET]` `/posts?page=${page_number}` |  adds panigation support with page size = 8, page_number starts at 0
+| `[GET]` `/posts?page=${page_number}&size=${page_size}` | pagination with custom page size 
 
 ```
 Sample Response for /posts
@@ -65,20 +65,32 @@ Sample Response for /posts
 
 | url `!!JWT Auth Required!!`| Description
 | --- | --- 
-| **[POST]** `/posts` |  creates new post |
-| **[PUT]** `/posts` |  updates existing post with post_id specified in the request body|
-| **[DELETE]** `/posts/${post_id}` |  deletes post with specified post_id|
+| `[POST]` `/posts` |  creates new post |
+| `[PUT]` `/posts` |  updates existing post with post_id specified in the request body|
+| `[DELETE]` `/posts/${post_id}` |  deletes post with specified post_id|
 
 
 
-Sample request body for /posts POST method
+Sample request/response for /posts POST method
 
 ```
+request:
 
 // all fields required
 {
     "title": "post title",
     "body": "main post body"
+}
+
+response:
+//returns post entity with currently logged in userId stored as authorId
+{
+    "createdAt": "creation time",
+    "updatedAt": "last modified time",
+    "id": post_id,
+    "title": "post title",
+    "body": "main post body",
+    "authorId": "current_loggedIn_userId"
 }
 ```
 Sample request body for /posts PUT method
@@ -89,5 +101,54 @@ Sample request body for /posts PUT method
     "id": post_id,
     "title": "updated title",
     "body": "updated body"
+}
+```
+
+#### User
+
+| url | Description
+| --- | --- 
+| `[POST]` `/user/registration` |  creates new user [Must provide unique userId]|
+| `[POST]` `/user/authenticate` |  autenticates user login and responds with a JWT for the user(expiration time: 2 hours)|
+
+
+Sample request/response for /user/registration POST method
+
+```
+request:
+
+// all fields required
+{
+	"name": "user name",
+	"userId": "unique userId",
+	"password": "user password"
+}
+
+response:
+//returns user entity hiding the password in response stored after hashing in the database
+{
+    "createdAt": "creation time",
+    "updatedAt": "last modified time",
+    "id": id,
+    "userId": "unique userId",
+    "name": "user name"
+}
+```
+
+
+Sample request/response body for /user/authenticate POST method
+
+```
+// all fields required
+{
+    "userId": "unique userId",
+    "password": "user password"
+    
+}
+
+response:
+//returns JWT() for the userId if authentication is successful
+{
+    "jwt": "user_JWT"
 }
 ```
