@@ -6,12 +6,18 @@ The newsportal API is built as part of the intern training process to implementi
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
-
+Dependencies used for this project
 * [Java jdk >= 8.0](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started.html)
-* [XAMPP(MySql)](https://www.apachefriends.org/index.html)
+* [Spring Boot v2.2.4.RELEASE](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started.html)
+* [XAMPP(MySql v5.7.29)](https://www.apachefriends.org/index.html)
+* [Git](https://git-scm.com/downloads)
 
 ### Installing
+
+Clone the repository using git
+```
+git clone https://github.com/fuadmmnf/Cefalo-newsportal-backend.git
+```
 
 Use the following command after navigating to the project root directory to run the apllication 
 

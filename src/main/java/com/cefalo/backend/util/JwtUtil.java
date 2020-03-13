@@ -3,6 +3,8 @@ package com.cefalo.backend.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class JwtUtil {
 
-    private String SECRET_KEY = "cefalo_backend_api_fuad";
+    @Value("${jwt_secret_key}")
+    private String SECRET_KEY;
+    @Value("$(jwt_signature_algorithm)")
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
     public String extractUserId(String token){
