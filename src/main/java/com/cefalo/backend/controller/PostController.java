@@ -83,7 +83,7 @@ public class PostController {
         Optional<Post> post = iPostService.createNewPost(requestPost, principal);
 
         return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.CREATED)
-                : new ResponseEntity<>("Unable to save post", HttpStatus.UNPROCESSABLE_ENTITY);
+                : new ResponseEntity<>("Unable to save post, violating contraints", HttpStatus.BAD_REQUEST);
 
     }
 

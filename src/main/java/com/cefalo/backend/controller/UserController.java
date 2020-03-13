@@ -43,12 +43,10 @@ public class UserController {
         try {
             newUser = iUserService.registerNewUserAccountAfterCheckingUserId(requestUser);
         } catch (UserIdExistsException e) {
-            return  new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+            return  new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        if(!newUser.isPresent()){
-            return ResponseEntity.badRequest().build();
-        }
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        return (!newUser.isPresent())? ResponseEntity.badRequest().body("Violating user contraints"): new ResponseEntity<>(newUser, HttpStatus.CREATED);
+
     }
 
 }

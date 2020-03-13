@@ -39,7 +39,11 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
-        return Optional.of(userRepository.saveAndFlush(user));
+        try {
+            return Optional.of(userRepository.saveAndFlush(user));
+        } catch (Exception e){
+            return Optional.empty();
+        }
     }
 
     private boolean userIdExists(String userId) {

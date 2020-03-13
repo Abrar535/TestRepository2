@@ -5,6 +5,7 @@ import com.cefalo.backend.model.User;
 import com.cefalo.backend.service.IUserService;
 import com.cefalo.backend.repository.PostRepository;
 import com.cefalo.backend.service.IPostService;
+import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +52,10 @@ public class PostServiceImpl implements IPostService {
         post.setCreatedAt(new Date());
         post.setUpdatedAt(new Date());
         currentUser.get().addPosts(post);
-        return Optional.ofNullable(save(post));
+
+
+        return save(post);
+
     }
 
     @Override
@@ -66,11 +70,15 @@ public class PostServiceImpl implements IPostService {
         tempPost.setTitle(requestPost.getTitle());
         tempPost.setBody(requestPost.getBody());
         tempPost.setUpdatedAt(new Date());
-        return Optional.ofNullable(save(tempPost));
+        return save(tempPost);
     }
 
-    public Post save(Post post) {
-        return postRepository.save(post);
+    public Optional<Post> save(Post post) {
+        try{
+            return Optional.of(postRepository.save(post));
+        } catch (Exception e){
+            return Optional.empty();
+        }
     }
 
 
