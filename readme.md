@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 * [Java jdk >= 8.0](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)
 * [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started.html)
-
+* [XAMPP(MySql)](https://www.apachefriends.org/index.html)
 
 ### Installing
 
