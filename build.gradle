@@ -38,6 +38,10 @@ dependencies {
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
 
     runtimeOnly 'mysql:mysql-connector-java'
+
+    //h2 database
+    testCompile group: 'com.h2database', name: 'h2', version: '1.3.148'
+
 }
 
 test {
