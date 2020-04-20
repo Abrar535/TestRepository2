@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
 
+    testImplementation('junit:junit:4.13')
     //fast XML Jackson
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.2'
 
@@ -40,7 +41,8 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
 
     //h2 database
-    testCompile group: 'com.h2database', name: 'h2', version: '1.3.148'
+    compile 'com.h2database:h2:1.4.199' // dialect
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 
 }
 

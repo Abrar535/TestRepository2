@@ -17,6 +17,8 @@ import java.util.Optional;
 public class PostController {
 
 
+    private static String UPLOADED_FOLDER = "/res/images";
+
     private final IPostService iPostService;
 
 
