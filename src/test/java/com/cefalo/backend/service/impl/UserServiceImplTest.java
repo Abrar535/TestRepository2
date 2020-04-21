@@ -15,10 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -42,12 +41,7 @@ public class UserServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        User user = new User();
-        user.setUserId("fuadmmnf");
-        user.setName("fuad");
-        user.setPassword("fuadqwer1234");
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
+        User user = new User("fuad", "fuadmmnf", "fuadqwer1234");
 
         Mockito.when(userRepository.findByUserId(user.getUserId()))
                 .thenReturn(user);

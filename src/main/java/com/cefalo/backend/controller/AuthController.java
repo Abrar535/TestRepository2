@@ -44,13 +44,16 @@ public class AuthController {
             }
     )
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
+        boolean isCredValid = true;
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUserId(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e){
-            throw e;
+            isCredValid = false;
         }
+        if(!isCredValid)
+            return ResponseEntity.status(401).body("Bad Credentials");
 
         final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getUserId());
         final String jwt = jwtUtil.generateToken(userDetails);

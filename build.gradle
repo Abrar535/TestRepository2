@@ -34,6 +34,8 @@ dependencies {
 
     //jjwt
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.11'
 
     //jaxb in-case of java 9+(built in dependency removed in java 9+)
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
