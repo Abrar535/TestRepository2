@@ -16,7 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebM
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,25 +33,27 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
 public class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
-    @MockBean
-    private IUserService userService;
+    @LocalServerPort
+    int randomServerPort;
 
 
     private User createUser(String username, String userId, String password) {
@@ -55,42 +62,51 @@ public class UserControllerTest {
         tempUser.setUserId(userId);
         tempUser.setPassword(password);
         tempUser.setUpdatedAt(new Date());
-        tempUser.setCreatedAt(new Date());
+        tempUser.setUpdatedAt(new Date());
 
         return tempUser;
     }
 
-    private String generateRequestBody(Object obj) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String result = ow.writeValueAsString(obj);
-        System.out.println("conversion: ");
-        System.out.println(result);
+//    @Test
+//    public void registerNewUser_whenUserIdUnique_thenReturnUser()
+//            throws Exception {
+//        String testUserId = "fuadmmnf";
+//        User testUser = createUser("fuad", testUserId, "fuadqwer1234");
+//
+//    }
 
-        return result;
-    }
+    @Test
+    public void addNewUser_WhenUniqueUserId_thenReturnUser() throws URISyntaxException
+    {
+        final String baseUrl = "http://localhost:"+randomServerPort+"/user/registration";
+        URI uri = new URI(baseUrl);
+        User user = createUser( "fuad", "fuadmmnf", "fuadmmnf1234");
 
-    @BeforeEach
-    public void setUp() {
-        User user = createUser("fuad", "fuadmmnf", "fuadqwer1234");
-        try {
-            given(userService.registerNewUserAccountAfterCheckingUserId(user)).willReturn(Optional.of(user));
-        } catch (UserIdExistsException e) {
-            e.printStackTrace();
-        }
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<User> request = new HttpEntity<>(user, headers);
+
+        ResponseEntity<String> result = this.restTemplate.postForEntity(uri, request, String.class);
+
+        //Verify request succeed
+        assertEquals(201, result.getStatusCodeValue());
     }
 
     @Test
-    public void registerNewUser_whenUserIdUnique_thenReturnUser()
-            throws Exception {
-        String testUserId = "fuadmmnf";
-        User testUser = createUser("fuad", testUserId, "fuadqwer1234");
+    public void whenDuplicateUserId_ReturnError() throws URISyntaxException
+    {
+        final String baseUrl = "http://localhost:"+randomServerPort+"/user/registration";
+        URI uri = new URI(baseUrl);
+        User user = createUser( "fuad", "fuadmmnf", "fuadmmnf1234");
 
-        mockMvc.perform(post("/user/registration")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(generateRequestBody(testUser)))
-                .andExpect(status().isCreated())
-                .andExpect((ResultMatcher) jsonPath("$[0].userId", is(testUserId)));
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<User> request = new HttpEntity<>(user, headers);
+        this.restTemplate.postForEntity(uri, request, String.class);
+
+        request = new HttpEntity<>(user, headers);
+        ResponseEntity<String> result = this.restTemplate.postForEntity(uri, request, String.class);
+
+        assertEquals(400, result.getStatusCodeValue());
     }
 }
