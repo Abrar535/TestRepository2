@@ -40,7 +40,8 @@ public class UserServiceImpl implements IUserService {
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
         try {
-            return Optional.of(userRepository.saveAndFlush(user));
+            User newUser = userRepository.saveAndFlush(user);
+            return Optional.of(newUser);
         } catch (Exception e){
             return Optional.empty();
         }

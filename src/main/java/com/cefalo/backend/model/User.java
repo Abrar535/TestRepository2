@@ -26,7 +26,7 @@ public class User extends AuditModel {
     @Length(min = 8)
     @NotNull
     @Lob
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @JsonIgnore
@@ -58,7 +58,7 @@ public class User extends AuditModel {
         this.name = name;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
     public String getPassword() {
         return password;
     }
