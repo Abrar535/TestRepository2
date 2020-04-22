@@ -12,4 +12,5 @@ public interface IPostService {
     Optional<Post> createNewPost(Post post, Principal principal);
     Optional<Post> updatePost(Post requestPost, Principal principal);
     Boolean deletePost(Long postId, Principal principal);
+    Optional<Post> save(Post post);
 }

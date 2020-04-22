@@ -48,5 +48,6 @@ public class UserRepositoryTest {
 
         //then
         assertEquals(newUser, found);
+
     }
 }

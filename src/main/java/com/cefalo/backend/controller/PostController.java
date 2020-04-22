@@ -2,13 +2,14 @@ package com.cefalo.backend.controller;
 
 
 import com.cefalo.backend.model.Post;
-import com.cefalo.backend.service.IUserService;
 import com.cefalo.backend.service.IPostService;
+import com.cefalo.backend.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -20,12 +21,14 @@ public class PostController {
     private static String UPLOADED_FOLDER = "/res/images";
 
     private final IPostService iPostService;
+    private final UploadService uploadService;
 
 
     @Autowired
-    public PostController(IPostService iPostService, IUserService iUserService)
+    public PostController(IPostService iPostService, UploadService uploadService)
     {
         this.iPostService = iPostService;
+        this.uploadService = uploadService;
     }
 
     @RequestMapping(
@@ -81,8 +84,20 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<?> createPost(@RequestBody Post requestPost, Principal principal) {
+    public ResponseEntity<?> createPost(@RequestBody Post requestPost,
+                                        @RequestParam("photo") MultipartFile file,
+                                        Principal principal) {
+
         Optional<Post> post = iPostService.createNewPost(requestPost, principal);
+        if(post.isPresent()){
+            Post tempPost = post.get();
+            String uploadPath = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
+            if(uploadPath != null){
+                tempPost.setPhotoFilePath(uploadPath);
+                post = iPostService.save(tempPost);
+            }
+
+        }
 
         return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.CREATED)
                 : new ResponseEntity<>("Unable to save post, violating contraints", HttpStatus.BAD_REQUEST);

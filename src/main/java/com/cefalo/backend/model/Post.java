@@ -24,9 +24,21 @@ public class Post extends AuditModel {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotBlank
+    private String photoFilePath = "res/images/default.png";
+
     @Transient
     private String authorId;
 
+
+    public Post(){}
+
+    public Post(long id, @NotBlank String title, @NotBlank String body, User user) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+        this.user = user;
+    }
 
     @Override
     public String toString() {
@@ -78,5 +90,13 @@ public class Post extends AuditModel {
 
     public void setAuthorId() {
         this.authorId = this.user.getUserId();
+    }
+
+    public String getPhotoFilePath() {
+        return photoFilePath;
+    }
+
+    public void setPhotoFilePath(String photoFilePath) {
+        this.photoFilePath = photoFilePath;
     }
 }

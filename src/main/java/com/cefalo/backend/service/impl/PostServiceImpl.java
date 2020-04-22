@@ -73,6 +73,7 @@ public class PostServiceImpl implements IPostService {
         return save(tempPost);
     }
 
+    @Override
     public Optional<Post> save(Post post) {
         try{
             return Optional.of(postRepository.save(post));
