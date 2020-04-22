@@ -33,6 +33,17 @@ public class Post extends AuditModel {
 
     public Post(){}
 
+    public Post(@NotBlank String title, @NotBlank String body) {
+        this.title = title;
+        this.body = body;
+    }
+
+    public Post(@NotBlank String title, @NotBlank String body, User user) {
+        this.title = title;
+        this.body = body;
+        this.user = user;
+    }
+
     public Post(long id, @NotBlank String title, @NotBlank String body, User user) {
         this.id = id;
         this.title = title;

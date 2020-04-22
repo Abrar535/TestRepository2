@@ -25,8 +25,7 @@ public class PostController {
 
 
     @Autowired
-    public PostController(IPostService iPostService, UploadService uploadService)
-    {
+    public PostController(IPostService iPostService, UploadService uploadService) {
         this.iPostService = iPostService;
         this.uploadService = uploadService;
     }
@@ -44,12 +43,12 @@ public class PostController {
 
         int pageNumber, pageSize;
         try {
-            pageNumber =  Integer.parseInt(pageCount);
+            pageNumber = Integer.parseInt(pageCount);
         } catch (NumberFormatException e) {
             pageNumber = -1;
         }
         try {
-            pageSize =  Integer.parseInt(dataSize);
+            pageSize = Integer.parseInt(dataSize);
         } catch (NumberFormatException e) {
             pageSize = 8;
         }
@@ -76,6 +75,7 @@ public class PostController {
             value = "/posts",
             method = RequestMethod.POST,
             consumes = {
+                    MediaType.MULTIPART_FORM_DATA_VALUE,
                     MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE,
             },
@@ -84,22 +84,22 @@ public class PostController {
                     MediaType.APPLICATION_XML_VALUE,
             }
     )
-    public ResponseEntity<?> createPost(@RequestBody Post requestPost,
+    public ResponseEntity<?> createPost(@RequestParam("title") String title,
+                                        @RequestParam("body") String body,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
-
-        Optional<Post> post = iPostService.createNewPost(requestPost, principal);
-        if(post.isPresent()){
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body), principal.getName());
+        if (post.isPresent()) {
             Post tempPost = post.get();
             String uploadPath = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
-            if(uploadPath != null){
+            if (uploadPath != null) {
                 tempPost.setPhotoFilePath(uploadPath);
                 post = iPostService.save(tempPost);
             }
 
         }
 
-        return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.CREATED)
+        return (post.isPresent()) ? new ResponseEntity<>(post, HttpStatus.CREATED)
                 : new ResponseEntity<>("Unable to save post, violating contraints", HttpStatus.BAD_REQUEST);
 
     }
@@ -111,6 +111,7 @@ public class PostController {
             consumes = {
                     MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE,
+
             },
             produces = {
                     MediaType.APPLICATION_JSON_VALUE,
@@ -118,12 +119,10 @@ public class PostController {
             }
     )
     public ResponseEntity<?> editPost(@RequestBody Post requestPost, Principal principal) {
-        Optional<Post> post = iPostService.updatePost(requestPost, principal);
-        return (post.isPresent())? new ResponseEntity<>(post, HttpStatus.NO_CONTENT)
+        Optional<Post> post = iPostService.updatePost(requestPost, principal.getName());
+        return (post.isPresent()) ? new ResponseEntity<>(post, HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>("Unauthorized access to post", HttpStatus.UNAUTHORIZED);
     }
-
-
 
 
     @RequestMapping(
@@ -131,7 +130,7 @@ public class PostController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<?> deletePost(@PathVariable Long id, Principal principal) {
-        return (iPostService.deletePost(id, principal))? new ResponseEntity<>(true, HttpStatus.NO_CONTENT)
+        return (iPostService.deletePost(id, principal.getName())) ? new ResponseEntity<>(true, HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>("Unauthorized access to post", HttpStatus.UNAUTHORIZED);
     }
 

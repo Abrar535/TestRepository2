@@ -2,19 +2,16 @@ package com.cefalo.backend.service.impl;
 
 import com.cefalo.backend.model.Post;
 import com.cefalo.backend.model.User;
-import com.cefalo.backend.service.IUserService;
 import com.cefalo.backend.repository.PostRepository;
 import com.cefalo.backend.service.IPostService;
-import org.hibernate.exception.DataException;
+import com.cefalo.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.Date;
 import java.util.Optional;
 
@@ -45,8 +42,8 @@ public class PostServiceImpl implements IPostService {
 
 
     @Override
-    public Optional<Post> createNewPost(Post post, Principal principal) {
-        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
+    public Optional<Post> createNewPost(Post post, String userId) {
+        Optional<User> currentUser = iUserService.findByUserId(userId);
 
         post.setUser(currentUser.get());
         post.setCreatedAt(new Date());
@@ -59,9 +56,9 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Optional<Post> updatePost(Post requestPost, Principal principal) {
+    public Optional<Post> updatePost(Post requestPost, String userId) {
         Optional<Post> post = postRepository.findById(requestPost.getId());
-        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
+        Optional<User> currentUser = iUserService.findByUserId(userId);
 
         if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
             return Optional.empty();
@@ -84,9 +81,9 @@ public class PostServiceImpl implements IPostService {
 
 
     @Override
-    public Boolean deletePost(Long postId, Principal principal) {
+    public Boolean deletePost(Long postId, String userId) {
         Optional<Post> post = postRepository.findById(postId);
-        Optional<User> currentUser = iUserService.findByUserId(principal.getName());
+        Optional<User> currentUser = iUserService.findByUserId(userId);
 
         if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
             return false;

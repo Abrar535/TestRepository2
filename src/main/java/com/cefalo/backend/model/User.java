@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -31,9 +32,17 @@ public class User extends AuditModel {
 
     @JsonIgnore
     @OneToMany(mappedBy="user")
-    private Collection<Post> posts;
+    private Collection<Post> posts = new ArrayList<>();
 
     public User(){ }
+
+    public User(long id, @NotBlank @Length(min = 5, message = "*Please make userId containing at least 5 alphanumeric characters") String userId, @NotBlank String name, @Length(min = 8) @NotNull String password) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+        this.password = password;
+    }
+
     public User(String name, String userId, String password){
         this.name = name;
         this.userId = userId;

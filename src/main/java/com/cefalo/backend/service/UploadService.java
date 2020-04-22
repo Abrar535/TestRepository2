@@ -11,7 +11,7 @@ import java.io.InputStream;
 @Service
 public class UploadService {
     public String consumeFile(MultipartFile uploadedFile, String fileName) {
-        String filePath = "res/images/" + fileName;
+        String filePath = "src/main/resources/images/post" + fileName + ".png";
         try (InputStream is = uploadedFile.getInputStream()) {
             FileUtils.copyInputStreamToFile(is, new File(filePath));
         } catch (IOException ex) {
