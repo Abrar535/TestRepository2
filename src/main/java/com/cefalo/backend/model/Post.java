@@ -51,6 +51,7 @@ public class Post extends AuditModel {
         this.user = user;
     }
 
+
     @Override
     public String toString() {
         return String.format("Post(" +

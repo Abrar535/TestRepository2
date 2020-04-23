@@ -3,8 +3,8 @@ package com.cefalo.backend.service.impl;
 import com.cefalo.backend.model.Post;
 import com.cefalo.backend.model.User;
 import com.cefalo.backend.repository.PostRepository;
+import com.cefalo.backend.repository.UserRepository;
 import com.cefalo.backend.service.IPostService;
-import com.cefalo.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,12 +19,12 @@ import java.util.Optional;
 public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
-    private final IUserService iUserService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, IUserService iUserService) {
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
-        this.iUserService = iUserService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -43,12 +43,12 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Optional<Post> createNewPost(Post post, String userId) {
-        Optional<User> currentUser = iUserService.findByUserId(userId);
+        User currentUser = userRepository.findByUserId(userId);
 
-        post.setUser(currentUser.get());
+        post.setUser(currentUser);
         post.setCreatedAt(new Date());
         post.setUpdatedAt(new Date());
-        currentUser.get().addPosts(post);
+        currentUser.addPosts(post);
 
 
         return save(post);
@@ -58,9 +58,9 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Optional<Post> updatePost(Post requestPost, String userId) {
         Optional<Post> post = postRepository.findById(requestPost.getId());
-        Optional<User> currentUser = iUserService.findByUserId(userId);
+        User currentUser = userRepository.findByUserId(userId);
 
-        if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
+        if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser))
             return Optional.empty();
 
         Post tempPost = post.get();
@@ -83,9 +83,9 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Boolean deletePost(Long postId, String userId) {
         Optional<Post> post = postRepository.findById(postId);
-        Optional<User> currentUser = iUserService.findByUserId(userId);
+        User currentUser = userRepository.findByUserId(userId);
 
-        if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser.get()))
+        if(!post.isPresent() || !isOriginalAuthor(post.get(), currentUser))
             return false;
         delete(post.get());
         return true;
