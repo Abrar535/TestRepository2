@@ -24,8 +24,10 @@ public class Post extends AuditModel {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private Boolean draft = false;
+
     @NotBlank
-    private String photoFilePath = "res/images/default.png";
+    private String photoFilePath = "images/default.png";
 
     @Transient
     private String authorId;
@@ -102,6 +104,18 @@ public class Post extends AuditModel {
 
     public void setAuthorId() {
         this.authorId = this.user.getUserId();
+    }
+
+    public Boolean getDraft() {
+        return draft;
+    }
+
+    public void setDraft(Boolean draft) {
+        this.draft = draft;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getPhotoFilePath() {

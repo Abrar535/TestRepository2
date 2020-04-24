@@ -18,7 +18,7 @@ import java.util.Optional;
 public class PostController {
 
 
-    private static String UPLOADED_FOLDER = "/res/images";
+    private static String STATIC_DIR = "/images/";
 
     private final IPostService iPostService;
     private final UploadService uploadService;
@@ -53,6 +53,33 @@ public class PostController {
             pageSize = 8;
         }
         return new ResponseEntity<>(iPostService.getAllPostsByPage(pageNumber, pageSize), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(
+            value = "/posts/draft",
+            method = RequestMethod.GET,
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+            }
+    )
+    public ResponseEntity<Iterable<Post>> getDraftUserPosts(@RequestParam(name = "page", required = false) String pageCount,
+                                                            @RequestParam(name = "size", required = false) String dataSize,
+                                                            Principal principal) {
+
+        int pageNumber, pageSize;
+        try {
+            pageNumber = Integer.parseInt(pageCount);
+        } catch (NumberFormatException e) {
+            pageNumber = -1;
+        }
+        try {
+            pageSize = Integer.parseInt(dataSize);
+        } catch (NumberFormatException e) {
+            pageSize = 8;
+        }
+        return new ResponseEntity<>(iPostService.getAllUserDraftsByPage(pageNumber, pageSize, principal.getName()), HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -91,9 +118,9 @@ public class PostController {
         Optional<Post> post = iPostService.createNewPost(new Post(title, body), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
-            String uploadPath = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
-            if (uploadPath != null) {
-                tempPost.setPhotoFilePath(uploadPath);
+            boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
+            if (isUploadComplete) {
+                tempPost.setPhotoFilePath(STATIC_DIR + "post" + post.get().getId() + ".png");
                 post = iPostService.save(tempPost);
             }
 

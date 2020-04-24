@@ -10,13 +10,13 @@ import java.io.InputStream;
 
 @Service
 public class UploadService {
-    public String consumeFile(MultipartFile uploadedFile, String fileName) {
-        String filePath = "src/main/resources/images/post" + fileName + ".png";
+    public boolean consumeFile(MultipartFile uploadedFile, String fileName) {
+        String filePath = "src/main/resources/static/images/post" + fileName + ".png";
         try (InputStream is = uploadedFile.getInputStream()) {
             FileUtils.copyInputStreamToFile(is, new File(filePath));
         } catch (IOException ex) {
             throw new RuntimeException(ex.getMessage());
         }
-        return filePath;
+        return true;
     }
 }

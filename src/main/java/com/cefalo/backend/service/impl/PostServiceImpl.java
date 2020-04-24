@@ -32,7 +32,16 @@ public class PostServiceImpl implements IPostService {
         Pageable pageable = (pageNumber != -1)?
             PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending())
             : PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
-        return postRepository.findAll(pageable);
+        return postRepository.findAllByDraft(pageable, false);
+    }
+
+    @Override
+    public Page<Post> getAllUserDraftsByPage(int pageNumber, int pageSize, String userId) {
+        User currentUser = userRepository.findByUserId(userId);
+        Pageable pageable = (pageNumber != -1)?
+                PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending())
+                : PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
+        return postRepository.findAllByUserAndDraft(pageable, currentUser, true);
     }
 
     @Override
