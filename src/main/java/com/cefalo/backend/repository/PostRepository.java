@@ -7,9 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
+
 
 @Repository
 public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
-    Page<Post> findAllByDraft(Pageable pageable, Boolean isDraft);
+    Page<Post> findAllByPublished(Pageable pageable, Boolean isPublished);
     Page<Post> findAllByUserAndDraft(Pageable pageable, User user, Boolean isDraft);
+    List<Post> findAllByScheduledPublishTimeAfter(Date date);
 }

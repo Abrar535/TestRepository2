@@ -10,9 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,7 +34,7 @@ public class PostServiceImpl implements IPostService {
         Pageable pageable = (pageNumber != -1)?
             PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending())
             : PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
-        return postRepository.findAllByDraft(pageable, false);
+        return postRepository.findAllByPublished(pageable, true);
     }
 
     @Override
@@ -63,6 +65,26 @@ public class PostServiceImpl implements IPostService {
         return save(post);
 
     }
+
+    @Scheduled(fixedRateString = "${sample.schedule.string}")
+    public void publishScheduledPost() throws InterruptedException {
+        System.out.println("Scheduling trigerred");
+        Date currentTime = new Date();
+
+        List<Post> pendingScheduledPosts = postRepository.findAllByScheduledPublishTimeAfter(currentTime);
+
+        for(Post post : pendingScheduledPosts){
+            long diffMinutes = (post.getScheduledPublishTime().getTime() - currentTime.getTime()) / (60 * 1000) % 60;
+            if(diffMinutes == 0){
+                post.setPublished(true);
+                postRepository.save(post);
+            }
+        }
+
+    }
+
+
+
 
     @Override
     public Optional<Post> updatePost(Post requestPost, String userId) {

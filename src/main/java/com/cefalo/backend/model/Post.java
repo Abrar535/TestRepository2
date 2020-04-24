@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 @Entity
 public class Post extends AuditModel {
@@ -26,6 +27,12 @@ public class Post extends AuditModel {
 
     private Boolean draft = false;
 
+    private Boolean published = true;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date scheduledPublishTime = null;
+
+
+
     @NotBlank
     private String photoFilePath = "images/default.png";
 
@@ -38,6 +45,12 @@ public class Post extends AuditModel {
     public Post(@NotBlank String title, @NotBlank String body) {
         this.title = title;
         this.body = body;
+    }
+
+    public Post(@NotBlank String title, @NotBlank String body, Boolean draft) {
+        this.title = title;
+        this.body = body;
+        this.draft = draft;
     }
 
     public Post(@NotBlank String title, @NotBlank String body, User user) {
@@ -116,6 +129,22 @@ public class Post extends AuditModel {
 
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
+    }
+
+    public Date getScheduledPublishTime() {
+        return scheduledPublishTime;
+    }
+
+    public void setScheduledPublishTime(Date scheduledPublishTime) {
+        this.scheduledPublishTime = scheduledPublishTime;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
     public String getPhotoFilePath() {

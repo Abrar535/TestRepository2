@@ -113,9 +113,10 @@ public class PostController {
     )
     public ResponseEntity<?> createPost(@RequestParam("title") String title,
                                         @RequestParam("body") String body,
+                                        @RequestParam(value = "draft") String draft,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
-        Optional<Post> post = iPostService.createNewPost(new Post(title, body), principal.getName());
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(draft)), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
             boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
