@@ -100,6 +100,8 @@ public class PostServiceImpl implements IPostService {
         Post tempPost = post.get();
         tempPost.setTitle(requestPost.getTitle());
         tempPost.setBody(requestPost.getBody());
+        tempPost.setDraft(requestPost.getDraft());
+        tempPost.setPublished(!requestPost.getDraft());
         tempPost.setUpdatedAt(new Date());
         return save(tempPost);
     }
