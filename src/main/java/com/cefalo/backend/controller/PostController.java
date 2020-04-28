@@ -117,7 +117,7 @@ public class PostController {
     )
     public ResponseEntity<?> createPost(@RequestParam("title") String title,
                                         @RequestParam("body") String body,
-                                        @RequestParam(value = "isDraft") String isDraft,
+                                        @RequestParam(value = "draft") String draft,
                                         @RequestParam(value = "scheduledPublishTime") String scheduledPublishTime,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
@@ -129,7 +129,7 @@ public class PostController {
             publishDate = null;
         }
 
-        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(isDraft), publishDate), principal.getName());
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(draft), publishDate), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
             boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
