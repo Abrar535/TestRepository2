@@ -49,10 +49,12 @@ public class Post extends AuditModel {
         this.body = body;
     }
 
-    public Post(@NotBlank String title, @NotBlank String body, Boolean draft) {
+    public Post(@NotBlank String title, @NotBlank String body, Boolean draft, Date scheduledPublishTime) {
         this.title = title;
         this.body = body;
         this.draft = draft;
+        this.scheduledPublishTime = scheduledPublishTime;
+        this.published = (scheduledPublishTime == null) && !draft;
     }
 
     public Post(@NotBlank String title, @NotBlank String body, User user) {

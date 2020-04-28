@@ -79,6 +79,7 @@ public class PostServiceImpl implements IPostService {
             long diffMinutes = (post.getScheduledPublishTime().getTime() - currentTime.getTime()) / (60 * 1000) % 60;
             if(diffMinutes == 0){
                 post.setPublished(true);
+                System.out.println(post.getId());
                 postRepository.save(post);
             }
         }

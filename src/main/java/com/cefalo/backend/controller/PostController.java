@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -114,9 +118,18 @@ public class PostController {
     public ResponseEntity<?> createPost(@RequestParam("title") String title,
                                         @RequestParam("body") String body,
                                         @RequestParam(value = "isDraft") String isDraft,
+                                        @RequestParam(value = "scheduledPublishTime") String scheduledPublishTime,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
-        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(isDraft)), principal.getName());
+        Date publishDate;
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        try {
+            publishDate = formatter.parse(scheduledPublishTime);
+        } catch (ParseException e) {
+            publishDate = null;
+        }
+
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(isDraft), publishDate), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
             boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
