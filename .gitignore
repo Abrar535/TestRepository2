@@ -1,7 +1,7 @@
 HELP.md
 .gradle
 build/
-src/main/resources/static/images/*.png
+src/main/resources/static/images/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
