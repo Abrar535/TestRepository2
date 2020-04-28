@@ -57,7 +57,7 @@ public class PostController {
 
 
     @RequestMapping(
-            value = "/posts/draft",
+            value = "/draft/posts",
             method = RequestMethod.GET,
             produces = {
                     MediaType.APPLICATION_JSON_VALUE,
@@ -113,10 +113,10 @@ public class PostController {
     )
     public ResponseEntity<?> createPost(@RequestParam("title") String title,
                                         @RequestParam("body") String body,
-                                        @RequestParam(value = "draft") String draft,
+                                        @RequestParam(value = "isDraft") String isDraft,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
-        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(draft)), principal.getName());
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(isDraft)), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
             boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));

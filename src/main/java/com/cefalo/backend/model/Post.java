@@ -4,6 +4,7 @@ package com.cefalo.backend.model;
 
 import com.cefalo.backend.model.template.AuditModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jdk.internal.jline.internal.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,6 +30,7 @@ public class Post extends AuditModel {
 
     private Boolean published = true;
     @Temporal(TemporalType.TIMESTAMP)
+    @Nullable
     private Date scheduledPublishTime = null;
 
 

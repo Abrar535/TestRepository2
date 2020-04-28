@@ -55,7 +55,9 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Optional<Post> createNewPost(Post post, String userId) {
         User currentUser = userRepository.findByUserId(userId);
-
+        if(post.getScheduledPublishTime() != null){
+            post.setPublished(false);
+        }
         post.setUser(currentUser);
         post.setCreatedAt(new Date());
         post.setUpdatedAt(new Date());
