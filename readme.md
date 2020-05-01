@@ -33,6 +33,83 @@ Gradle
 ## API Documentation
 The API can negotiation content feeds in both JSON and XML formats.
 
+
+#### User
+
+| url | Description
+| --- | --- 
+| `[POST]` `/user/registration` |  creates new user [Must provide unique userId]|
+| `[POST]` `/user/authenticate` |  autenticates user login and responds with a JWT for the user(expiration time: 2 hours)|
+
+
+Sample request/response for /user/registration POST method
+
+```
+request:
+// all fields required
+{
+	"name": "user name",
+	"userId": "unique userId",
+	"password": "user password"
+}
+
+response:
+//returns user entity hiding the password in response stored after hashing in the database
+{
+    "createdAt": "creation time",
+    "updatedAt": "last modified time",
+    "id": id,
+    "userId": "unique userId",
+    "name": "user name"
+    "password": "hashed password"
+}
+
+
+curl sample request:
+
+curl --request POST 'http://localhost:8080/user/registration' --header 'Content-Type: application/json' \
+--data-raw '{
+	"name": "fuad",
+	"userId": "fuadmmnf",
+	"password": "fuadmmnf12345"
+}'
+
+```
+
+
+Sample request/response body for /user/authenticate POST method
+
+```
+request:
+// all fields required
+{
+    "userId": "unique userId",
+    "password": "user password"
+    
+}
+
+response:
+//returns JWT() for the userId if authentication is successful
+{
+    "jwt": "user_JWT"
+}
+
+
+
+curl sample request:
+
+curl --request POST 'http://localhost:8080/user/authentication' --header 'Content-Type: application/json' \
+--data-raw '{
+	"userId": "fuadmmnf",
+	"password": "fuadmmnf12345"
+}'
+
+curl response: 
+    "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWFkbW1uZjIiLCJleHAiOjE1ODgzMzIwMTksImlhdCI6MTU4ODMyNDgxOX0.HqoCn984ZukTJAHx9rUOATWPBCB5s8x0NVaYkc5qC6k"
+
+```
+
+
 #### Posts
 | url | Description
 | --- | --- 
@@ -66,6 +143,11 @@ Sample Response for /posts
     "numberOfElements": number_of_elements_received
     ...
 }
+
+
+curl sample request:
+curl --request GET 'http://localhost:8080/posts'
+
 ```
 
 | url `!!JWT Auth Required!!`| Description
@@ -79,12 +161,14 @@ Sample Response for /posts
 Sample request/response for /posts POST method
 
 ```
-request:
+multipart form request:
 
-// all fields required
 {
     "title": "post title",
     "body": "main post body"
+    "photo": #file to upload#
+    "draft": "true"/"false"
+    "scheduledPublishTime": "time string in format yyyy-MM-dd'T'HH:mm:ss'Z'" //optional
 }
 
 response:
@@ -95,8 +179,35 @@ response:
     "id": post_id,
     "title": "post title",
     "body": "main post body",
+    "draft": "draft status boolean",
+    "published": "publish status boolean",
+    "scheduledPublishTime": "publish time string"/null,
+    "photoFilePath": "link to fetch image file",
     "authorId": "current_loggedIn_userId"
 }
+
+
+curl sample request:
+
+curl --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWFkbW1uZjIiLCJleHAiOjE1ODgzMzIwMTksImlhdCI6MTU4ODMyNDgxOX0.HqoCn984ZukTJAHx9rUOATWPBCB5s8x0NVaYkc5qC6k'\
+ -F title=curl -F body=body -F draft=false -F photo=@image.png -F scheduledPublishTime=2020-05-02T11:20:40Z\
+ http://localhost:8080/posts
+
+curl response:
+{
+    "createdAt":"2020-05-01T10:04:59.446+0000",
+    "updatedAt":"2020-05-01T10:04:59.446+0000",
+    "id":3,
+    "title":"curl",
+    "body":"body",
+    "draft":false,
+    "published":false,
+    "scheduledPublishTime":"2020-05-02T11:20:40.000+0000",
+    "photoFilePath":"/images/post3.png",
+    "authorId":"fuadmmnf"
+}
+
+
 ```
 Sample request/response body for /posts PUT method
 
@@ -107,59 +218,18 @@ request:
     "id": post_id,
     "title": "updated title",
     "body": "updated body"
+    "draft": "true"/"false"
 }
 
 response: no body with 201(created) status code
-```
 
-#### User
-
-| url | Description
-| --- | --- 
-| `[POST]` `/user/registration` |  creates new user [Must provide unique userId]|
-| `[POST]` `/user/authenticate` |  autenticates user login and responds with a JWT for the user(expiration time: 2 hours)|
-
-
-Sample request/response for /user/registration POST method
+curl sample request:
+curl --request PUT 'http://localhost:8080/posts' --header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWFkbW1uZjIiLCJleHAiOjE1ODgzMzIwMTksImlhdCI6MTU4ODMyNDgxOX0.HqoCn984ZukTJAHx9rUOATWPBCB5s8x0NVaYkc5qC6k' \
+--data-raw '{"id": 3, "title": "edited Curl Title", "body":"edited body", "draft":false }'
 
 ```
-request:
-// all fields required
-{
-	"name": "user name",
-	"userId": "unique userId",
-	"password": "user password"
-}
 
-response:
-//returns user entity hiding the password in response stored after hashing in the database
-{
-    "createdAt": "creation time",
-    "updatedAt": "last modified time",
-    "id": id,
-    "userId": "unique userId",
-    "name": "user name"
-}
-```
-
-
-Sample request/response body for /user/authenticate POST method
-
-```
-request:
-// all fields required
-{
-    "userId": "unique userId",
-    "password": "user password"
-    
-}
-
-response:
-//returns JWT() for the userId if authentication is successful
-{
-    "jwt": "user_JWT"
-}
-```
 
 
 ### Error Messages

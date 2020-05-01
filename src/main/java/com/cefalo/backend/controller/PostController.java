@@ -118,18 +118,20 @@ public class PostController {
     public ResponseEntity<?> createPost(@RequestParam("title") String title,
                                         @RequestParam("body") String body,
                                         @RequestParam(value = "draft") String draft,
-                                        @RequestParam(value = "scheduledPublishTime") String scheduledPublishTime,
+                                        @RequestParam(value = "scheduledPublishTime", required = false) String scheduledPublishTime,
                                         @RequestParam("photo") MultipartFile file,
                                         Principal principal) {
-        Date publishDate;
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        try {
-            publishDate = formatter.parse(scheduledPublishTime);
-        } catch (ParseException e) {
-            publishDate = null;
+        Date publishDate = null;
+        if(scheduledPublishTime != null) {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            try {
+                publishDate = formatter.parse(scheduledPublishTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
-        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.valueOf(draft), publishDate), principal.getName());
+        Optional<Post> post = iPostService.createNewPost(new Post(title, body, Boolean.parseBoolean(draft), publishDate), principal.getName());
         if (post.isPresent()) {
             Post tempPost = post.get();
             boolean isUploadComplete = uploadService.consumeFile(file, String.valueOf(post.get().getId()));
