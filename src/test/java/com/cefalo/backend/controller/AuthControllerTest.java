@@ -48,7 +48,7 @@ public class AuthControllerTest {
         try {
             userService.registerNewUserAccountAfterCheckingUserId(new User("fuad", "fuadmmnf", "fuadqwer1234"));
         } catch (UserIdExistsException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

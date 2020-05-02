@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -24,7 +25,7 @@ public class UserRepositoryTest {
     @Test
     public void findById_whenUserIdPasswordCorrent_thenReturnUser() {
         //given
-        User newUser = new User("fuadmmnf", "fuad", "fuadqwer1234");
+        User newUser = new User("fuad", "fuadmmnf", "fuadqwer1234");
         testEntityManager.persist(newUser);
         testEntityManager.flush();
 
@@ -37,17 +38,17 @@ public class UserRepositoryTest {
 
     
     @Test
-    public void findById_whenUserIdIncorrect_thenReturnUser() {
+    public void findById_whenUserIdIncorrect_thenReturnNull() {
         //given
-        User newUser = new User("fuad", "fuad", "fuadqwer1234");
+        User newUser = new User("fuad", "fuadmmnf", "fuadqwer1234");
         testEntityManager.persist(newUser);
         testEntityManager.flush();
 
         //when
-        User found = userRepository.findByUserId(newUser.getUserId());
+        User found = userRepository.findByUserId("fuad");
 
         //then
-        assertEquals(newUser, found);
+        assertNull(found);
 
     }
 }
